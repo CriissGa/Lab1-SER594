@@ -1,0 +1,7 @@
+For this first assignment, we will be creating a small project that utilizes many of Unity's basic features to ensure everyone has a mastery of the basics.
+
+Use a third person camera. Control player movement with WASD. Jump with the spacebar. The camera should rotate to follow behind the player.
+Create two medium sized rooms that are linked together by a single short hallway. Both rooms should be more than just boxes (place a few items and/or platforms to jump on and feel free to make the rooms a shape other than square) and should be distinct in terms of contents and appearance.
+There must be at least five constantly moving objects. These can be in either room, and can move between them. They must remain within the game space, unless they are traveling between rooms. Rotating in place counts as well, but at least one object needs to actually translate along at least one axis. These objects can also be aesthetic or functional (like platforms the player can jump on). Their position/rotation needs to update every frame. Do not worry about collision on these (unless you specifically want it).
+Because these should remain within the space the player has access to, you should define some maximum value that the object translates to, and flip the objects direction when it reaches that value.
+Place a texture on everything. Nothing should be the default white color. You are free to find/make your own textures.
