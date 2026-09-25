@@ -1200,7 +1200,7 @@ GameObject:
   - component: {fileID: 476784258}
   - component: {fileID: 476784257}
   m_Layer: 0
-  m_Name: Column34
+  m_Name: Column4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1558,7 +1558,7 @@ GameObject:
   - component: {fileID: 849350327}
   - component: {fileID: 849350326}
   m_Layer: 0
-  m_Name: Room2_RigthWall
+  m_Name: Room2_RightWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2279,7 +2279,7 @@ GameObject:
   - component: {fileID: 1506386958}
   - component: {fileID: 1506386957}
   m_Layer: 0
-  m_Name: Room2_BackRigth
+  m_Name: Room2_BackRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2391,7 +2391,7 @@ GameObject:
   - component: {fileID: 1572127605}
   - component: {fileID: 1572127604}
   m_Layer: 0
-  m_Name: Hallway_RigthWall
+  m_Name: Hallway_RightWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2988,7 +2988,7 @@ GameObject:
   - component: {fileID: 1943397971}
   - component: {fileID: 1943397970}
   m_Layer: 0
-  m_Name: Room1_FrontRigth
+  m_Name: Room1_FrontRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
