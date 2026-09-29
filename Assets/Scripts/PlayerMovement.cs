@@ -8,8 +8,12 @@ public class PlayerMovement : MonoBehaviour // podremos ejecutar awake, update y
     // SerializeField nos permite exponer variables privadas en el inspector de Unity para poder modificarlas desde allí sin necesidad de hacerlas públicas
     [SerializeField] private float moveSpeed = 5f; // velocidad de movimiento del jugador
     [SerializeField] private float jumpForce = 6f; // fuerza de salto del jugador
-    [SerializeField] private float turnSpeed = 10f; // velocidad de giro del jugador
+    [SerializeField] private float mouseSensitivity = 0.15f;
+    [SerializeField] private float turnSmoothTime = 0.08f; // tiempo de giro suave del jugador
     [SerializeField] private float groundCheckDistance = 1.1f; // distancia para verificar si el jugador está en el suelo
+
+    private float targetYaw;
+    private float turnVelocity;
 
     private Rigidbody rb; // referencia al componente Rigidbody del jugador para aplicar movimiento fisico
     private Vector2 moveInput; // entrada de movimiento del jugador, Vector2 guarda 2 numeros X y Y
@@ -17,11 +21,21 @@ public class PlayerMovement : MonoBehaviour // podremos ejecutar awake, update y
     private void Awake() //se ejecuta una vez al inicio del juego, antes de cualquier otra función
     {
         rb = GetComponent<Rigidbody>(); // buscamos el comp Rigidbody del personaje para usarlo despues
+        rb.freezeRotation = true; // no quiero que el jugador gire al chocar (arreglamos la camara)
+        targetYaw = rb.rotation.eulerAngles.y;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
     // Update is called once per frame
     private void Update() //update se ejecuta cada frame (para leer el teclado)
     {
+        Mouse mouse = Mouse.current;
+
+        if (mouse != null && mouse.rightButton.isPressed)
+        {
+            targetYaw += mouse.delta.ReadValue().x * mouseSensitivity;
+        }
+
         Keyboard keyboard = Keyboard.current; // obtenemos el teclado actual
 
         if (keyboard == null)
@@ -58,26 +72,44 @@ public class PlayerMovement : MonoBehaviour // podremos ejecutar awake, update y
 
     private void FixedUpdate() //se ejecuta en intervalos regulares (lo mejor para fisicas)/ (mover el RigidBody)
     {
-        Vector3 moveDirection = new Vector3(moveInput.x, 0f, moveInput.y); // convertimos el vector de entrada en un vector 3D para mover al jugador
+        // Suavizamos el giro hacia la orientación elegida con el mouse.
+        float smoothYaw = Mathf.SmoothDampAngle(
+            rb.rotation.eulerAngles.y,
+            targetYaw,
+            ref turnVelocity,
+            turnSmoothTime,
+            Mathf.Infinity,
+            Time.fixedDeltaTime
+        );
 
-        Vector3 currentVelocity = rb.linearVelocity; // obtenemos la velocidad actual del jugador
+        Quaternion playerRotation = Quaternion.Euler(0f, smoothYaw, 0f);
+        rb.MoveRotation(playerRotation);
 
-        rb.linearVelocity = new Vector3(moveDirection.x * moveSpeed, currentVelocity.y, moveDirection.z * moveSpeed); // aplicamos la velocidad al RigidBody del jugador
-        
-        if (moveDirection.sqrMagnitude > 0.01f) // si el jugador se esta moviendo
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection); // calculamos la rotacion deseada del jugador
-            Quaternion smoothRotation = Quaternion.Slerp(rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime); // aplicamos la rotacion al RigidBody del jugador
-            rb.MoveRotation(smoothRotation); // aplicamos la rotacion al RigidBody del jugador
-        }
+        // Convertimos WASD en movimiento según la orientación del personaje
+        Vector3 localMovement = new Vector3(moveInput.x, 0f, moveInput.y);
+        Vector3 moveDirection = playerRotation * localMovement;
 
-        bool isGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance); // verificamos si el jugador esta en el suelo
+        // Conservamos la velocidad vertical para la gravedad y el salto
+        Vector3 currentVelocity = rb.linearVelocity;
+
+        rb.linearVelocity = new Vector3(
+            moveDirection.x * moveSpeed,
+            currentVelocity.y,
+            moveDirection.z * moveSpeed
+        );
+
+        bool isGrounded = Physics.Raycast(
+            transform.position,
+            Vector3.down,
+            groundCheckDistance
+        );
+
         if (isGrounded && jumpRequested)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // aplicamos una fuerza hacia arriba para hacer saltar al jugador
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
-        jumpRequested = false; // reiniciamos la bandera de salto
 
+        jumpRequested = false;
     }
 
     

@@ -10,23 +10,20 @@ public class ThirdPersonCamera : MonoBehaviour
     [SerializeField] private float followSpeed = 8f; // velocidad de seguimiento de la cámara
     [SerializeField] private float rotationSpeed = 5f; // velocidad de rotación de la cámara
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void LateUpdate() // unity primero ejectuta Update, luego FixedUpdate y luego LateUpdate (para que la camara se mueva despues de que el jugador se mueva)
+    private void LateUpdate()
     {
         if (target == null)
         {
-            return; // si no hay player, no hacemos nada
+            return;
         }
 
-        //posicion deseada  = Player - detras + arriba
-        Vector3 desiredPosition = target.position - target.forward * distance + Vector3.up * height; // calculamos la posicion deseada de la camara
-        //uso de lerp para suavizar el movimiento de la camara
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, followSpeed * Time.deltaTime); // interpolamos la posicion de la camara hacia la posicion deseada
+        // Seguimos detrás de la orientación del personaje.
+        transform.position =
+            target.position
+            - target.forward * distance
+            + Vector3.up * height;
 
-        Vector3 lookPoint= target.position + Vector3.up * lookHeight; // calculamos el punto al que la camara debe mirar
-
-        Quaternion desiredRotation = Quaternion.LookRotation(lookPoint - transform.position); // calculamos la rotacion deseada de la camara
-        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotationSpeed * Time.deltaTime); // interpolamos la rotacion de la camara hacia la rotacion deseada
-    
+        transform.LookAt(target.position + Vector3.up * lookHeight); // Miramos hacia el personaje.
     }
 
 }
